@@ -16,7 +16,7 @@ parameters;
 
 %% Slip-angle sweep
 alpha_deg = -alpha_max_deg : 0.1 : alpha_max_deg;
-alpha     = deg2rad(alpha_deg);
+alpha     = alpha_deg;   % coefficients fitted with slip angle in DEGREES
 
 %% Compute curves at each load
 fig = figure('Position', [100 100 880 520], 'Color', 'w');
