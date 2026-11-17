@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: "Pacejka Magic Formula tyre model (MATLAB + Python)"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Patil
+    given-names: Jaykumar
+repository-code: "https://github.com/jaykumarpatil9099/pacejka-tyre-model"
+license: MIT
+keywords: [vehicle dynamics, tyre model, pacejka, magic formula, matlab, python]

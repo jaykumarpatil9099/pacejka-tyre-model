@@ -1,20 +1,28 @@
-# Pacejka Magic Formula — MATLAB
+# Pacejka Magic Formula — MATLAB + Python
+
+[![CI](https://github.com/jaykumarpatil9099/pacejka-tyre-model/actions/workflows/ci.yml/badge.svg)](https://github.com/jaykumarpatil9099/pacejka-tyre-model/actions/workflows/ci.yml)
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=jaykumarpatil9099/pacejka-tyre-model&file=figures/plot_lateral_curves.m)
+![MATLAB](https://img.shields.io/badge/MATLAB-R2023b%2B-orange)
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Clean MATLAB implementation of the Pacejka simplified four-parameter Magic Formula tyre model — lateral and longitudinal — with load-sensitive peak coefficient and a friction-envelope view of combined slip.
 
-Originally implemented during the Vehicle Dynamics Modelling and Simulation course at Hochschule Trier; this repository is a focused standalone extraction of the tyre model used inside both the [vehicle dynamics models toolkit](https://github.com/jaykumarpatil9099/vehicle-dynamics-models-matlab-simulink) (where it sits inside the 14-DoF full-vehicle model) and — planned — the v06 release of the [GT3 Lap Time Simulator](https://github.com/jaykumarpatil9099/gt3-lap-time-simulator), where it will replace the simplified `μ(F_z)` surrogate currently used for QSS calibration.
+Originally implemented during the Vehicle Dynamics Modelling and Simulation course at Hochschule Trier; this repository is a focused standalone extraction of the tyre model used inside both the [vehicle dynamics models toolkit](https://github.com/jaykumarpatil9099/vehicle-dynamics-models-matlab-simulink) (where it sits inside the 14-DoF full-vehicle model) and the v06 release of the [GT3 Lap Time Simulator](https://github.com/jaykumarpatil9099/gt3-lap-time-simulator), where the full MF 5.2 version replaced the simplified `μ(F_z)` surrogate.
+
+A tested **Python port** lives in [`python/`](python/), and both versions are checked against the same reference values in CI on every push.
 
 ## What it shows
 
 ### Lateral curves — load family
 
-Lateral force `F_y` vs slip angle `α` for four vertical loads. The classic Pacejka shape: linear at zero slip, peaks at a slip-angle around 5–10°, and degrades beyond that. Higher load gives more peak force in absolute terms but lower peak *coefficient* `F_y / F_z` — the degressive friction behaviour every race engineer designs setups around.
+Lateral force `F_y` vs slip angle `α` for four vertical loads. The classic Pacejka shape: linear at zero slip, peaks at a slip angle of about 7°, and degrades beyond that. Higher load gives more peak force in absolute terms but lower peak *coefficient* `F_y / F_z` — the degressive friction behaviour every race engineer designs setups around.
 
 ![Lateral curves — load family](figures/fig_lateral_curves.png)
 
 ### Longitudinal curves — load family
 
-Longitudinal force `F_x` vs slip ratio `κ` for the same loads. Peak occurs at lower slip than lateral (typically κ ≈ 0.10–0.15) and is the basis of traction control and brake balance design.
+Longitudinal force `F_x` vs slip ratio `κ` for the same loads. Peak occurs at κ ≈ 0.20 for this coefficient set and is the basis of traction control and brake balance design.
 
 ![Longitudinal curves — load family](figures/fig_longitudinal_curves.png)
 
@@ -57,6 +65,10 @@ which gives a peak friction coefficient `μ_peak = D / F_z = a1·F_z + a2` that 
 
 The same formula form drives both axes (lateral with slip angle, longitudinal with slip ratio) using different coefficient sets. Combined slip is approximated by the Kamm ellipse — a textbook simplification that captures the dominant force-trade-off without the inter-axis interaction terms of the full Pacejka 2002 combined-slip model.
 
+## Units
+
+The lateral coefficient sets were fitted with the slip angle in **degrees**, so `pacejka_magic_formula` takes `α` in degrees for lateral force. Longitudinal slip ratio `κ` is dimensionless. (An earlier version of the plot scripts converted `α` to radians first, which made the lateral curves look linear. That is fixed, and a unit test now guards against it.)
+
 ## Default coefficients
 
 | Axis | B | C | E | a1 | a2 |
@@ -72,24 +84,41 @@ Lifted directly from the parameter files of the 14-DoF model in the [VD models r
 
 Every chassis decision that moves vertical load between tyres (anti-roll bar split, ride height, aero balance, weight distribution) interacts with the degressive friction term. Adding ARB stiffness on one axle redistributes load to the outer tyre on that axle, but the gained outer-tyre force is *less than* the lost inner-tyre force because the outer tyre's `μ_peak` is lower at higher `F_z`. The net axle force drops — and that's why ARB tuning matters for handling balance even though it doesn't change total grip across the car. The same physics underpins lateral-load-transfer modelling in the [VD models 14-DoF](https://github.com/jaykumarpatil9099/vehicle-dynamics-models-matlab-simulink) and the lap simulator's lateral-transfer pass.
 
+## Quick start
+
+**MATLAB (R2023b+)**, or click *Open in MATLAB Online* above, which works with a free MathWorks account:
+
+```matlab
+buildtool            % static code analysis + unit tests
+buildtool figures    % regenerate the README figures
+```
+
+**Python** (uses [uv](https://docs.astral.sh/uv/)):
+
+```bash
+cd python
+uv sync && uv run pytest
+uv run python examples/plot_curves.py
+```
+
 ## File layout
 
 ```
 pacejka-tyre-model/
 ├── parameters.m                     # default coefficients (3 sets)
+├── buildfile.m                      # MATLAB build tool: check, test, figures
 ├── src/
 │   ├── pacejka_magic_formula.m      # the F = D sin(C atan(B s ...)) function
 │   └── pacejka_peak_value.m         # D = (a1 Fz + a2) Fz
-└── figures/
-    ├── plot_lateral_curves.m
-    ├── plot_longitudinal_curves.m
-    ├── plot_axle_comparison.m
-    └── plot_friction_envelope.m
+├── tests/PacejkaTest.m              # matlab.unittest suite
+├── figures/                         # plot scripts + PNGs
+├── python/                          # Python port (uv, ruff, pytest)
+└── .github/workflows/ci.yml         # MATLAB + Python CI on every push
 ```
 
 ## Background
 
-Originally implemented during the Vehicle Dynamics Modelling and Simulation course of the M.Sc. Interdisciplinary Engineering (Automotive) programme at [Hochschule Trier](https://www.hochschule-trier.de/). Course is in progress — final assignment outstanding, certificate not yet issued.
+Originally implemented during the Vehicle Dynamics Modelling and Simulation course of the M.Sc. Interdisciplinary Engineering (Automotive) programme at [Hochschule Trier](https://www.hochschule-trier.de/).
 
 ## License
 

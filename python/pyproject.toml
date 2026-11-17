@@ -1,0 +1,29 @@
+[project]
+name = "pacejka"
+version = "1.0.0"
+description = "Simplified four-parameter Pacejka Magic Formula tyre model (Python port of the MATLAB implementation)"
+readme = "README.md"
+authors = [{ name = "Jaykumar Patil", email = "jaykumarpatil9099@gmail.com" }]
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2.0"]
+
+[project.optional-dependencies]
+plot = ["matplotlib>=3.9"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8", "matplotlib>=3.9"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "NPY"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

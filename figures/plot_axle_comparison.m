@@ -17,7 +17,7 @@ parameters;
 
 %% Slip-angle sweep
 alpha_deg = -alpha_max_deg : 0.1 : alpha_max_deg;
-alpha     = deg2rad(alpha_deg);
+alpha     = alpha_deg;   % coefficients fitted with slip angle in DEGREES
 
 %% Per-axle peak values at the reference load
 Df = pacejka_peak_value(Fz_ref, a1f, a2f);

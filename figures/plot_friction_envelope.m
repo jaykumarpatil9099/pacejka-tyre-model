@@ -23,7 +23,7 @@ addpath('..');
 parameters;
 
 %% Find peak Fx and Fy at each load by sweeping slip
-alpha_sweep = deg2rad(0 : 0.1 : 25);
+alpha_sweep = 0 : 0.1 : 25;   % [deg] — coefficients fitted in degrees
 kappa_sweep = 0 : 0.001 : 0.30;
 
 theta = linspace(0, 2*pi, 360);

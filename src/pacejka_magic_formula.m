@@ -7,12 +7,13 @@ function F = pacejka_magic_formula(slip, B, C, D, E)
 %
 %       F = D * sin( C * atan( B*slip - E*(B*slip - atan(B*slip)) ) )
 %
-%   The same form is used for lateral force (slip = slip angle in rad)
+%   The same form is used for lateral force (slip = slip angle in deg)
 %   and longitudinal force (slip = slip ratio, dimensionless), with
 %   different coefficient sets for each axis.
 %
 %   Inputs:
-%     slip - slip angle [rad] for lateral, slip ratio [-] for longitudinal
+%     slip - slip angle [deg] for lateral (the default coefficient sets
+%            were fitted in degrees), slip ratio [-] for longitudinal
 %     B    - stiffness factor (controls slope at zero slip)
 %     C    - shape factor (controls peak vs descent shape)
 %     D    - peak force [N]
